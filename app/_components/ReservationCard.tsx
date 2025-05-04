@@ -2,7 +2,7 @@ import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import { format, formatDistance, isPast, isToday, parseISO } from "date-fns";
 import DeleteReservation from "./DeleteReservation";
 import { Booking } from "@/types/Booking/type";
-
+import Image from "next/image";
 export const formatTimeFromNow = (dateStr: string) =>
   formatDistance(parseISO(dateStr), new Date(), {
     addSuffix: true,
@@ -11,13 +11,13 @@ export const formatTimeFromNow = (dateStr: string) =>
 function ReservationCard({ booking }: { booking: Booking }) {
   const {
     id,
-    guestId,
+    // guestId,
     startDate,
     endDate,
     numNights,
     totalPrice,
     numGuests,
-    status,
+    // status,
     created_at,
     cabins: { name, image },
   } = booking;
@@ -25,7 +25,7 @@ function ReservationCard({ booking }: { booking: Booking }) {
   return (
     <div className='flex border border-primary-800'>
       <div className='relative h-32 aspect-square'>
-        <img
+        <Image
           src={image}
           alt={`Cabin ${name}`}
           className='object-cover border-r border-primary-800'
