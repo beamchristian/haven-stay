@@ -1,3 +1,7 @@
+export const metadata = {
+  title: "Update Profile",
+};
+
 export default function Page() {
   return (
     <div>

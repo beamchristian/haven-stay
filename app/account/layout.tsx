@@ -1,7 +1,6 @@
-import React from "react";
-import SideNavigation from "../_components/SideNavigation";
+import SideNavigation from "@/app/_components/SideNavigation";
 
-export default function layout({
+export default function Layout({
   children,
 }: Readonly<{
   children: React.ReactNode;
