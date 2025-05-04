@@ -25,15 +25,15 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const currentYear = new Date().getFullYear();
+  // const currentYear = new Date().getFullYear();
   return (
     <html lang='en'>
       <body
         className={`${josefin.className} antialiased bg-primary-950 text-primary-100 min-h-screen flex flex-col relative`}
       >
         <Header />
-        <div className='flex-1 px-8 py-12'>
-          <main className='max-w-7xl mx-auto'>{children}</main>
+        <div className='flex-1 px-8 py-12 grid'>
+          <main className='max-w-7xl mx-auto w-full'>{children}</main>
         </div>
         {/* <footer>HavenStay Copyright © {currentYear}</footer> */}
       </body>
