@@ -1,19 +1,18 @@
-// Define a type for the booking data structure for clarity and type safety
-interface Cabin {
+interface Haven {
   name: string;
   image: string;
 }
 
-export interface Booking {
+export interface Reservation {
   id: number;
-  guestId: number;
+  clientId: number;
   startDate: string; // ISO date string
   endDate: string; // ISO date string
   numNights: number;
   totalPrice: number;
-  numGuests: number;
+  numClients: number;
   status: string; // e.g., 'upcoming', 'past' - often derived, but useful for typing
   created_at: string; // ISO date string
-  cabins: Cabin; // Nested cabin details
+  havens: Haven; // Nested haven details
   // Add other properties if they exist and are used by ReservationCard
 }

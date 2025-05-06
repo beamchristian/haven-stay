@@ -1,14 +1,15 @@
 import { Haven } from "@/types/Haven/type";
 import HavenCard from "../_components/HavenCard";
+import { getHavens } from "../_lib/data-service";
 
 export const metadata = {
   title: "Havens",
   description: "A list of all properties available for rent from HavenStay",
 };
 
-export default function Page() {
+export default async function Page() {
   // CHANGE
-  const havens: Haven[] = [];
+  const havens: Haven[] = await getHavens();
 
   return (
     <div>

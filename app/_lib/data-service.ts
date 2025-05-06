@@ -1,30 +1,24 @@
 import { eachDayOfInterval } from "date-fns";
 import { supabase } from "./supabase";
 
-/////////////
-// GET
-
-export async function getCabin(id: number) {
+export async function getHaven(id: number) {
   const { data, error } = await supabase
-    .from("cabins")
+    .from("havens")
     .select("*")
     .eq("id", id)
     .single();
 
-  // For testing
-  // await new Promise((res) => setTimeout(res, 1000));
-
   if (error) {
-    console.error("Supabase error fetching bookings:", error);
-    throw new Error("Bookings could not be loaded");
+    console.error("Supabase error fetching reservations:", error);
+    throw new Error("Reservations could not be loaded");
   }
 
   return data;
 }
 
-export async function getCabinPrice(id: number) {
+export async function getHavenPrice(id: number) {
   const { data, error } = await supabase
-    .from("cabins")
+    .from("havens")
     .select("regularPrice, discount")
     .eq("id", id)
     .single();
@@ -36,98 +30,100 @@ export async function getCabinPrice(id: number) {
   return data;
 }
 
-export const getCabins = async function () {
+export const getHavens = async function () {
   const { data, error } = await supabase
-    .from("cabins")
+    .from("havens")
     .select("id, name, maxCapacity, regularPrice, discount, image")
     .order("name");
 
   if (error) {
     console.error(error);
-    throw new Error("Cabins could not be loaded");
+    throw new Error("Havens could not be loaded");
   }
 
   return data;
 };
 
-// Guests are uniquely identified by their email address
-export async function getGuest(email: string) {
+// Clients are uniquely identified by their email address
+export async function fetchClientRecordByEmail(clientEmailAddress: string) {
   const { data, error } = await supabase
-    .from("guests")
+    .from("clients")
     .select("*")
-    .eq("email", email)
+    .eq("email", clientEmailAddress)
     .single();
-
-  // No error here! We handle the possibility of no guest in the sign in callback
+  if (error) {
+    console.error(error);
+    throw new Error("Could not find client");
+  }
   return data;
 }
 
-export async function getBooking(id: number) {
-  const { data, error, count } = await supabase
-    .from("bookings")
+export async function getReservation(id: number) {
+  const { data, error } = await supabase
+    .from("reservations")
     .select("*")
     .eq("id", id)
     .single();
 
   if (error) {
     console.error(error);
-    throw new Error("Booking could not get loaded");
+    throw new Error("Reservation could not be loaded");
   }
 
   return data;
 }
 
-export async function getBookings(guestId: number) {
-  const { data, error, count } = await supabase
-    .from("bookings")
-    // We actually also need data on the cabins as well. But let's ONLY take the data that we actually need, in order to reduce downloaded data.
+export async function getReservations(clientId: number) {
+  const { data, error } = await supabase
+    .from("reservations")
     .select(
-      "id, created_at, startDate, endDate, numNights, numGuests, totalPrice, guestId, cabinId, cabins(name, image)"
+      "id, created_at, startDate, endDate, numNights, numClients, totalPrice, clientId, havenId, havens(name, image)"
     )
-    .eq("guestId", guestId)
+    .eq("clientId", clientId)
     .order("startDate");
 
   if (error) {
     console.error(error);
-    throw new Error("Bookings could not get loaded");
+    throw new Error("Reservations could not be loaded");
   }
 
   return data;
 }
 
-export async function getBookedDatesByCabinId(
-  cabinId: number
+export async function getReservedDatesByHavenId(
+  havenId: number
 ): Promise<Date[]> {
-  let today = new Date();
+  const today = new Date();
   today.setUTCHours(0, 0, 0, 0);
   const todayISO = today.toISOString();
 
-  // Getting all bookings
+  // Getting all reservations
   const { data, error } = await supabase
-    .from("bookings")
+    .from("reservations")
     .select("*")
-    .eq("cabinId", cabinId)
+    .eq("havenId", havenId)
     .or(`startDate.gte.${todayISO},status.eq.checked-in`);
 
   if (error) {
     console.error(error);
-    throw new Error("Bookings could not get loaded");
+    throw new Error("Reservations could not be loaded");
   }
 
   // Converting to actual dates to be displayed in the date picker
-  const bookedDates = data
-    .map((booking) => {
+  const reservedDates = data
+    .map((reservation) => {
       return eachDayOfInterval({
-        start: new Date(booking.startDate),
-        end: new Date(booking.endDate),
+        start: new Date(reservation.startDate),
+        end: new Date(reservation.endDate),
       });
     })
     .flat();
 
-  return bookedDates;
+  return reservedDates;
 }
 
-export async function getSettings() {
+export async function loadSystemConfiguration() {
+  // Renamed function
   const { data, error } = await supabase.from("settings").select("*").single();
 
   if (error) {
@@ -138,43 +134,62 @@ export async function getSettings() {
   return data;
 }
 
-/////////////
-// CREATE
-
-export async function createGuest(newGuest: string) {
-  const { data, error } = await supabase.from("guests").insert([newGuest]);
+export async function addNewClient(clientInformation: string) {
+  // Renamed function and parameter (assuming object type)
+  const { data, error } = await supabase
+    .from("clients")
+    .insert([clientInformation]); // Parameter name usage updated
 
   if (error) {
     console.error(error);
-    throw new Error("Guest could not be created");
+    throw new Error("Client could not be created");
   }
 
   return data;
 }
 
-export async function createBooking(newBooking: string) {
+export async function createReservation(newReservation: object) {
+  // Parameter type likely incorrect
   const { data, error } = await supabase
-    .from("bookings")
-    .insert([newBooking])
+    .from("reservations")
+    .insert([newReservation])
     // So that the newly created object gets returned!
     .select()
     .single();
 
   if (error) {
     console.error(error);
-    throw new Error("Booking could not be created");
+    throw new Error("Reservation could not be created");
   }
 
   return data;
 }
 
-/////////////
 // UPDATE
 
-// The updatedFields is an object which should ONLY contain the updated data
-export async function updateGuest(id: number, updatedFields: number) {
+// The fieldsToUpdate is an object which should ONLY contain the updated data
+export async function modifyClientRecord(
+  clientId: number,
+  fieldsToUpdate: object
+) {
   const { data, error } = await supabase
-    .from("guests")
+    .from("clients")
+    .update(fieldsToUpdate)
+    .eq("id", clientId)
+    .select()
+    .single();
+
+  if (error) {
+    console.error(error);
+    throw new Error("Client could not be updated");
+  }
+  return data;
+}
+
+export async function updateReservation(id: number, updatedFields: string) {
+  // Parameter type likely incorrect, keeping names
+  const { data, error } = await supabase
+    .from("reservations")
     .update(updatedFields)
     .eq("id", id)
     .select()
@@ -182,35 +197,22 @@ export async function updateGuest(id: number, updatedFields: number) {
 
   if (error) {
     console.error(error);
-    throw new Error("Guest could not be updated");
+    throw new Error("Reservation could not be updated");
   }
   return data;
 }
 
-export async function updateBooking(id: number, updatedFields: number) {
-  const { data, error } = await supabase
-    .from("bookings")
-    .update(updatedFields)
-    .eq("id", id)
-    .select()
-    .single();
-
-  if (error) {
-    console.error(error);
-    throw new Error("Booking could not be updated");
-  }
-  return data;
-}
-
-/////////////
 // DELETE
 
-export async function deleteBooking(id: number) {
-  const { data, error } = await supabase.from("bookings").delete().eq("id", id);
+export async function deleteReservation(id: number) {
+  const { data, error } = await supabase
+    .from("reservations")
+    .delete()
+    .eq("id", id);
 
   if (error) {
     console.error(error);
-    throw new Error("Booking could not be deleted");
+    throw new Error("Reservation could not be deleted");
   }
   return data;
 }

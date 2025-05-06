@@ -7,13 +7,26 @@ function HavenCard({ haven }: { haven: Haven }) {
   const { id, name, maxCapacity, regularPrice, discount, image } = haven;
 
   return (
-    <div className='flex border-primary-800 border'>
-      <Image
-        src={image}
-        alt={`Haven ${name}`}
-        className='flex-1 border-r border-primary-800'
-      />
+    // Default to flex-col (vertical stack) on small screens,
+    // then switch to flex-row (horizontal) on medium screens and up (md:)
+    <div className='flex flex-col md:flex-row border-primary-800 border'>
+      {/* Image container:
+          - relative is needed for the fill prop on Image
+          - h-48 sets a fixed height on small screens when stacked vertically
+          - md:h-auto removes the fixed height on medium screens and up
+          - md:flex-1 makes it take 1 fraction of the available width on medium screens and up
+      */}
+      <div className='relative h-48 md:h-auto md:flex-1'>
+        <Image
+          src={image}
+          alt={`Haven ${name}`}
+          // Adjust the border: border-b on small screens, no border-b on md+, border-r on md+
+          className='object-cover border-b md:border-b-0 md:border-r border-primary-800'
+          fill
+        />
+      </div>
 
+      {/* Content container: flex-grow is fine, allows it to take remaining space */}
       <div className='flex-grow'>
         <div className='pt-5 pb-4 px-7 bg-primary-950'>
           <h3 className='text-accent-500 font-semibold text-2xl mb-3'>
@@ -44,10 +57,16 @@ function HavenCard({ haven }: { haven: Haven }) {
           </p>
         </div>
 
-        <div className='bg-primary-950 border-t border-t-primary-800 text-right'>
+        {/* Link div:
+            - bg-primary-950 and border-t are fine
+            - text-center centers the text on small screens when stacked
+            - md:text-right aligns the text to the right on medium screens and up
+        */}
+        <div className='bg-primary-950 border-t border-t-primary-800 text-center md:text-right'>
           <Link
-            href={`havens/${id}`}
-            className='border-l border-primary-800 py-4 px-6 inline-block hover:bg-accent-600 transition-all hover:text-primary-900'
+            href={`/havens/${id}`}
+            // Add border-l only on medium screens and up (md:border-l)
+            className='md:border-l border-primary-800 py-4 px-6 inline-block hover:bg-accent-600 transition-all hover:text-primary-900'
           >
             Details & reservation &rarr;
           </Link>
