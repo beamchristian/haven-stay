@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Navigation() {
   return (
-    <nav className='z-10 text-xl'>
+    <nav className='z-10 text-lg pr-[6%] md:[pr-[10%]]'>
       <ul className='flex gap-16 items-center'>
         <li>
           <Link
@@ -25,7 +25,7 @@ export default function Navigation() {
             href='/account'
             className='hover:text-accent-400 transition-colors'
           >
-            Guest area
+            Account
           </Link>
         </li>
       </ul>
