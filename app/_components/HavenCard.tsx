@@ -26,8 +26,7 @@ function HavenCard({ haven }: { haven: Haven }) {
         />
       </div>
 
-      {/* Content container: flex-grow is fine, allows it to take remaining space */}
-      <div className='flex-grow'>
+      <div className='flex-[1.5]'>
         <div className='pt-5 pb-4 px-7 bg-primary-950'>
           <h3 className='text-accent-500 font-semibold text-2xl mb-3'>
             Haven {name}
