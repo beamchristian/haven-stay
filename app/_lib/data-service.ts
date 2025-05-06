@@ -1,7 +1,7 @@
 import { eachDayOfInterval } from "date-fns";
 import { supabase } from "./supabase";
 
-export async function getHaven(id: number) {
+export async function getHaven(id: string) {
   const { data, error } = await supabase
     .from("havens")
     .select("*")
@@ -33,7 +33,7 @@ export async function getHavenPrice(id: number) {
 export const getHavens = async function () {
   const { data, error } = await supabase
     .from("havens")
-    .select("id, name, maxCapacity, regularPrice, discount, image")
+    .select("id, name, maxCapacity, regularPrice, discount, image, description")
     .order("name");
 
   if (error) {
