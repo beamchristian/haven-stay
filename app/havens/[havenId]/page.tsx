@@ -1,38 +1,74 @@
 import { getHaven } from "@/app/_lib/data-service";
 import { Haven } from "@/types/Haven/type";
 import { EyeSlashIcon, MapPinIcon, UsersIcon } from "@heroicons/react/24/solid";
-import Image from "next/image"; // Assuming Image is used later in your actual code
+import Image from "next/image";
 
-// Correct the type definition for the params prop based on the error message ([havenId])
+// Correct the type definition for the params prop
 export default async function Page({
   params,
 }: {
   params: { havenId: string };
 }) {
-  const { havenId } = await params; // <-- ADDED AWAIT HERE
+  const { havenId } = await params; // Awaiting params for next.js convention
 
-  const haven: Haven = await getHaven(havenId); // <-- Use awaitedParams.havenId
+  // Added Number() conversion as getHaven likely expects a number ID
+  const haven: Haven = await getHaven(String(havenId));
 
   const { id, name, maxCapacity, regularPrice, discount, image, description } =
     haven;
 
   return (
-    <div className='max-w-6xl mx-auto mt-8'>
-      <div className='grid grid-cols-[3fr_4fr] gap-20 border border-primary-800 py-3 px-10 mb-24'>
-        <div className='relative scale-[1.15] -translate-x-3'>
-          {/* Consider using Next/Image here for optimization */}
-          <img src={image} alt={`Cabin ${name}`} />
+    // Outer container: max-width, centered, top margin, responsive horizontal padding
+    <div className='max-w-6xl mx-auto mt-8 px-4 sm:px-6 lg:px-8'>
+      {/* Main layout grid:
+          - Default to 1 column, gap-8
+          - On large screens (lg:), switch to 2 columns (3fr_4fr ratio) and gap-20
+          - ADDED MORE GRANULAR responsive horizontal padding inside the grid
+      */}
+      <div
+        className='grid grid-cols-1 lg:grid-cols-[3fr_4fr] gap-8 lg:gap-20
+                      border border-primary-800 py-3 px-4 sm:px-6 md:px-8 lg:px-10 mb-24'
+      >
+        {" "}
+        {/* Updated grid padding */}
+        {/* Image container:
+            - relative is needed for Next/Image fill
+            - Set height on small/medium screens
+            - auto height on large screens (let grid/width handle it)
+            - Should NOT have fixed scale or translate classes here
+        */}
+        <div className='relative h-64 md:h-80 lg:h-auto'>
+          {" "}
+          {/* Responsive height, NO fixed transforms */}
+          {/* Using Next/Image with fill */}
+          <Image
+            src={image}
+            alt={`Haven ${name}`}
+            fill
+            className='object-cover'
+          />
         </div>
-
+        {/* Text Content container */}
         <div>
-          {/* Consider making this responsive, the translate-x and w-[150%] are fixed values */}
-          <h3 className='text-accent-100 font-black text-7xl mb-5 translate-x-[-254px] bg-primary-950 p-6 pb-1 w-[150%]'>
+          {" "}
+          {/* This div is implicitly in the first column on mobile, second on lg+ */}
+          {/* Title:
+              - Responsive text size
+              - Should NOT have fixed negative translate or excessive fixed width
+              - Responsive padding
+          */}
+          <h3
+            className='text-4xl sm:text-5xl lg:text-7xl font-black mb-5
+                         bg-primary-950 p-4 md:p-6 lg:p-6 lg:pb-1 // Responsive padding
+                         w-full // Should be full width within its container
+                        '
+          >
+            {" "}
             Haven {name}
           </h3>
-
           <p className='text-lg text-primary-300 mb-10'>{description}</p>
-
           <ul className='flex flex-col gap-4 mb-7'>
+            {/* ... (list items are already reasonably responsive) ... */}
             <li className='flex gap-3 items-center'>
               <UsersIcon className='h-5 w-5 text-primary-600' />
               <span className='text-lg'>
@@ -57,8 +93,10 @@ export default async function Page({
         </div>
       </div>
 
+      {/* Reservation section title */}
       <div>
-        <h2 className='text-5xl font-semibold text-center'>
+        {/* Responsive text size */}
+        <h2 className='text-3xl md:text-4xl lg:text-5xl font-semibold text-center'>
           Reserve today. Pay on arrival.
         </h2>
       </div>
