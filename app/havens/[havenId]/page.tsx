@@ -7,12 +7,12 @@ import Image from "next/image";
 export default async function Page({
   params,
 }: {
-  params: { havenId: string };
+  params: Promise<{ havenId: string }>;
 }) {
   const { havenId } = await params; // Awaiting params for next.js convention
 
   // Added Number() conversion as getHaven likely expects a number ID
-  const haven: Haven = await getHaven(String(havenId));
+  const haven: Haven = await getHaven(havenId);
 
   const { name, maxCapacity, image, description } = haven;
 
