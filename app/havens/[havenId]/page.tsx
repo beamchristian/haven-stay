@@ -14,33 +14,16 @@ export default async function Page({
   // Added Number() conversion as getHaven likely expects a number ID
   const haven: Haven = await getHaven(String(havenId));
 
-  const { id, name, maxCapacity, regularPrice, discount, image, description } =
-    haven;
+  const { name, maxCapacity, image, description } = haven;
 
   return (
     // Outer container: max-width, centered, top margin, responsive horizontal padding
     <div className='max-w-6xl mx-auto mt-8 px-4 sm:px-6 lg:px-8'>
-      {/* Main layout grid:
-          - Default to 1 column, gap-8
-          - On large screens (lg:), switch to 2 columns (3fr_4fr ratio) and gap-20
-          - ADDED MORE GRANULAR responsive horizontal padding inside the grid
-      */}
       <div
         className='grid grid-cols-1 lg:grid-cols-[3fr_4fr] gap-8 lg:gap-20
                       border border-primary-800 py-3 px-4 sm:px-6 md:px-8 lg:px-10 mb-24'
       >
-        {" "}
-        {/* Updated grid padding */}
-        {/* Image container:
-            - relative is needed for Next/Image fill
-            - Set height on small/medium screens
-            - auto height on large screens (let grid/width handle it)
-            - Should NOT have fixed scale or translate classes here
-        */}
         <div className='relative h-64 md:h-80 lg:h-auto'>
-          {" "}
-          {/* Responsive height, NO fixed transforms */}
-          {/* Using Next/Image with fill */}
           <Image
             src={image}
             alt={`Haven ${name}`}
@@ -50,20 +33,12 @@ export default async function Page({
         </div>
         {/* Text Content container */}
         <div>
-          {" "}
-          {/* This div is implicitly in the first column on mobile, second on lg+ */}
-          {/* Title:
-              - Responsive text size
-              - Should NOT have fixed negative translate or excessive fixed width
-              - Responsive padding
-          */}
           <h3
             className='text-4xl sm:text-5xl lg:text-7xl font-black mb-5
                          bg-primary-950 p-4 md:p-6 lg:p-6 lg:pb-1 // Responsive padding
                          w-full // Should be full width within its container
                         '
           >
-            {" "}
             Haven {name}
           </h3>
           <p className='text-lg text-primary-300 mb-10'>{description}</p>
